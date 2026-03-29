@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}Your Farms{% endblock %}
+
+{% block content %}
+<div class="dashboard-page">
+  <div class="dashboard-header">
+    <h1>Your Farms</h1>
+    <a href="/farms/new/" class="btn-primary">List a New Farm</a>
+  </div>
+
+  {% if farms %}
+  <div class="dashboard-grid">
+    {% for farm in farms %}
+    <div class="dashboard-card">
+      <div class="card-img">
+        {% if farm.primary_photo %}
+        <img src="{{ farm.primary_photo.image.url }}" alt="{{ farm.name }}" loading="lazy">
+        {% else %}
+        {% with farm.categories.first as cat %}
+        <div class="card-img-placeholder {% if cat %}placeholder-{{ cat.slug }}{% endif %}">
+          {% if cat %}<span class="placeholder-emoji">{{ cat.icon }}</span>{% endif %}
+        </div>
+        {% endwith %}
+        {% endif %}
+        {% if farm.is_active %}
+        <span class="status-badge status-active">Active</span>
+        {% else %}
+        <span class="status-badge status-inactive">Inactive</span>
+        {% endif %}
+      </div>
+      <div class="card-body">
+        <h3 class="card-name">{{ farm.name }}</h3>
+        <p class="card-location">{{ farm.address_display }}</p>
+        {% if farm.review_count %}
+        <div class="card-rating">
+          <span class="stars">{{ farm.star_display }}</span>
+          <span class="rating-text">{{ farm.review_count }} review{{ farm.review_count|pluralize }}</span>
+        </div>
+        {% endif %}
+      </div>
+      <div class="dashboard-card-actions">
+        <a href="{% url 'farms:detail' farm.slug %}" class="btn-secondary btn-sm">View</a>
+        <a href="{% url 'farms:edit' farm.slug %}" class="btn-secondary btn-sm">Edit</a>
+      </div>
+
+      <!-- Product Management -->
+      <div class="dashboard-products" id="products-container-{{ farm.slug }}">
+        <h4>What's available now</h4>
+        {% with farm.products.all as products %}
+        {% if products %}
+        <div class="products-quick-list">
+          {% for product in products %}
+          <div class="product-chip {% if not product.is_available %}product-unavailable{% endif %}">
+            <span>{{ product.name }}</span>
+            <form method="post" style="display:inline;"
+                  hx-post="{% url 'farms:manage_products' farm.slug %}"
+                  hx-target="#products-container-{{ farm.slug }}"
+                  hx-swap="innerHTML">
+              {% csrf_token %}
+              <input type="hidden" name="action" value="toggle">
+              <input type="hidden" name="product_id" value="{{ product.id }}">
+              <button type="submit" class="toggle-dot {% if product.is_available %}dot-on{% else %}dot-off{% endif %}" title="Toggle availability"></button>
+            </form>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-hint">No products yet</p>
+        {% endif %}
+        {% endwith %}
+        <a href="{% url 'farms:manage_products' farm.slug %}" class="btn-ghost btn-sm">Manage products</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <p class="empty-state-heading">You haven't listed any farms yet</p>
+    <p class="empty-state-text">Share your farm with neighbours across Alberta. It only takes a few minutes.</p>
+    <a href="/farms/new/" class="btn-primary">List Your Farm</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

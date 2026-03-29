@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Find Local Farms{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1>Find what's growing near you</h1>
+  <p class="hero-sub">Fresh eggs, local honey, pasture-raised beef — straight from Alberta farms to your table.</p>
+
+  <form class="search-bar" hx-get="/api/farms/search/" hx-target="#results" hx-trigger="submit">
+    <input type="text" name="q" value="{{ query }}" placeholder="Search for eggs, honey, beef near Lacombe...">
+    <input type="hidden" name="lat" id="user-lat">
+    <input type="hidden" name="lng" id="user-lng">
+    <button type="submit" class="btn-primary">Search</button>
+  </form>
+</section>
+
+<section class="browse-controls">
+  <div class="category-chips">
+    <button class="chip {% if not selected_category %}active{% endif %}"
+            hx-get="/api/farms/search/"
+            hx-target="#results"
+            hx-include="[name='q'],[name='lat'],[name='lng'],[name='radius']">
+      All
+    </button>
+    {% for cat in categories %}
+    <button class="chip {% if cat.slug == selected_category %}active{% endif %}"
+            hx-get="/api/farms/search/?category={{ cat.slug }}"
+            hx-target="#results"
+            hx-include="[name='lat'],[name='lng'],[name='radius']">
+      {{ cat.icon }} {{ cat.name }}
+    </button>
+    {% endfor %}
+  </div>
+
+  <div class="radius-control">
+    <button type="button" class="btn-secondary btn-sm" onclick="requestGeolocation()">
+      Use my location
+    </button>
+    <label>Within <output id="radius-val">{{ radius|default:"50" }}</output> km</label>
+    <input type="range" name="radius" min="10" max="200" value="{{ radius|default:"50" }}" step="10"
+           class="radius-slider"
+           oninput="document.getElementById('radius-val').value=this.value"
+           hx-get="/api/farms/search/"
+           hx-target="#results"
+           hx-trigger="change"
+           hx-include="[name='q'],[name='lat'],[name='lng'],[name='category']">
+    <p class="radius-hint">or click anywhere on the map to set your location</p>
+  </div>
+
+
+</section>
+
+<div class="browse-layout">
+  <div id="map-container">
+    <div id="map"></div>
+  </div>
+  <div id="results">
+    {% include 'farms/_results.html' %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{% static 'js/map.js' %}"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    initMap();
+    // Auto-request geolocation on page load
+    requestGeolocation();
+
+    // Update radius circle live as slider moves
+    var slider = document.querySelector('[name="radius"]');
+    if (slider) {
+      slider.addEventListener('input', function() {
+        updateRadiusCircle();
+      });
+    }
+  });
+
+  // Reload map pins after HTMX swaps results
+  document.body.addEventListener('htmx:afterSwap', function(e) {
+    if (e.detail.target.id === 'results') {
+      loadFarms();
+    }
+  });
+</script>
+{% endblock %}

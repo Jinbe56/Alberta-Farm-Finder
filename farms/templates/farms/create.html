@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}List Your Farm{% endblock %}
+
+{% block content %}
+<div class="form-page">
+  <h1>List Your Farm</h1>
+  <p class="form-intro">Share your farm with neighbours across Alberta. It only takes a few minutes.</p>
+
+  <form method="post" enctype="multipart/form-data" class="farm-form">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group {% if field.errors %}has-error{% endif %}">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}
+      <p class="form-help">{{ field.help_text }}</p>
+      {% endif %}
+      {% for error in field.errors %}
+      <p class="form-error">{{ error }}</p>
+      {% endfor %}
+    </div>
+    {% endfor %}
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Create Listing</button>
+      <a href="/" class="btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,36 @@
+<a href="{% url 'farms:detail' farm.slug %}" class="farm-card">
+  <div class="card-img">
+    {% if farm.primary_photo %}
+    <img src="{{ farm.primary_photo.image.url }}" alt="{{ farm.name }}" loading="lazy">
+    {% else %}
+    {% with farm.categories.first as cat %}
+    <div class="card-img-placeholder {% if cat %}placeholder-{{ cat.slug }}{% endif %}">
+      {% if cat %}
+      <span class="placeholder-emoji">{{ cat.icon }}</span>
+      {% endif %}
+    </div>
+    {% endwith %}
+    {% endif %}
+    {% if farm.distance_km is not None %}
+    <span class="distance-badge">{{ farm.distance_km|floatformat:0 }} km</span>
+    {% endif %}
+  </div>
+  <div class="card-body">
+    <h3 class="card-name">{{ farm.name }}</h3>
+    <p class="card-location">{{ farm.address_display }}</p>
+    <div class="card-tags">
+      {% for cat in farm.categories.all|slice:":3" %}
+      <span class="tag tag-product">{{ cat.name }}</span>
+      {% endfor %}
+      {% if farm.categories.count > 3 %}
+      <span class="tag tag-product tag-more">+{{ farm.categories.count|add:"-3" }} more</span>
+      {% endif %}
+    </div>
+    {% if farm.review_count %}
+    <div class="card-rating">
+      <span class="stars">{{ farm.star_display }}</span>
+      <span class="rating-text">{{ farm.average_rating }} ({{ farm.review_count }})</span>
+    </div>
+    {% endif %}
+  </div>
+</a>

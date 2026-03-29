@@ -1,0 +1,28 @@
+<nav class="navbar">
+  <div class="nav-inner">
+    <a href="/" class="logo">
+      <span class="logo-farm">Farm</span><span class="logo-finder">Finder</span>
+    </a>
+
+    <input type="checkbox" id="nav-toggle" class="nav-toggle-checkbox" aria-hidden="true">
+    <label for="nav-toggle" class="nav-hamburger" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+
+    <div class="nav-links">
+      <a href="/" class="nav-link">Browse</a>
+      <a href="/markets/" class="nav-link">Markets</a>
+      {% if user.is_authenticated %}
+        <a href="/dashboard/" class="nav-link">Dashboard</a>
+        <a href="/profile/" class="nav-link">Profile</a>
+        <a href="/logout/" class="nav-link">Log out</a>
+      {% else %}
+        <a href="/login/" class="nav-link">Log in</a>
+        <a href="/register/" class="nav-link">Register</a>
+      {% endif %}
+      <a href="/farms/new/" class="btn-primary nav-cta">List Your Farm</a>
+    </div>
+  </div>
+</nav>

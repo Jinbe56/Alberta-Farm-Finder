@@ -1,0 +1,216 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load farm_tags %}
+
+{% block title %}{{ farm.name }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+
+{% block content %}
+<article class="farm-detail">
+  {% if farm.photos.exists %}
+  <div class="photo-gallery">
+    {% for photo in farm.photos.all %}
+    <div class="gallery-item">
+      <img src="{{ photo.image.url }}" alt="{{ farm.name }}" loading="lazy">
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="photo-gallery">
+    <div class="gallery-item">
+      {% with farm.categories.first as cat %}
+      <div class="card-img-placeholder {% if cat %}placeholder-{{ cat.slug }}{% endif %}" style="height:300px;border-radius:20px;">
+        {% if cat %}<span class="placeholder-emoji" style="font-size:5rem;">{{ cat.icon }}</span>{% endif %}
+      </div>
+      {% endwith %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="detail-content">
+    <div class="detail-main">
+      <div class="detail-header">
+        <div class="detail-title-row">
+          <h1>{{ farm.name }}</h1>
+          {% if farm.is_verified %}
+          <span class="tag tag-verified">Verified</span>
+          {% endif %}
+        </div>
+        {% if farm.review_count %}
+        <div class="detail-rating">
+          <span class="stars">{{ farm.star_display }}</span>
+          <span class="rating-text">{{ farm.average_rating }} ({{ farm.review_count }} review{{ farm.review_count|pluralize }})</span>
+        </div>
+        {% endif %}
+        <p class="detail-address">{{ farm.address_display }}</p>
+      </div>
+
+      {% if farm.description %}
+      <section class="detail-section">
+        <h2>About</h2>
+        <p>{{ farm.description|linebreaksbr }}</p>
+      </section>
+      {% endif %}
+
+      {% if farm.categories.exists %}
+      <section class="detail-section">
+        <h2>What we grow &amp; raise</h2>
+        <div class="tag-group">
+          {% for cat in farm.categories.all %}
+          <span class="tag tag-product">{{ cat.icon }} {{ cat.name }}</span>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
+      {% if farm.products.exists %}
+      <section class="detail-section">
+        <h2>Currently available</h2>
+        <div class="products-display">
+          {% for product in farm.products.all %}
+          <div class="product-item {% if not product.is_available %}product-unavailable{% endif %}">
+            <span class="product-dot {% if product.is_available %}dot-on{% else %}dot-off{% endif %}"></span>
+            <span class="product-name">{{ product.name }}</span>
+            {% if product.is_seasonal %}
+            <span class="tag tag-season" style="font-size:0.7rem;">Seasonal{% if product.season_note %} — {{ product.season_note }}{% endif %}</span>
+            {% endif %}
+            {% if product.price_note %}
+            <span class="product-price">{{ product.price_note }}</span>
+            {% endif %}
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
+      {% if farm.sales_channels %}
+      <section class="detail-section">
+        <h2>Where to find us</h2>
+        <div class="tag-group">
+          {% for channel in farm.sales_channels %}
+          <span class="tag tag-product">{{ channel|channel_label }}</span>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
+      {% if farm.certifications %}
+      <section class="detail-section">
+        <h2>Certifications</h2>
+        <div class="tag-group">
+          {% for cert in farm.certifications %}
+          <span class="tag tag-verified">{{ cert|cert_label }}</span>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
+      {% if farm.markets.exists %}
+      <section class="detail-section">
+        <h2>Find us at these markets</h2>
+        <div class="markets-list-inline">
+          {% for market in farm.markets.all %}
+          <a href="{% url 'farms:market_detail' market.slug %}" class="market-inline-card">
+            <span class="market-icon">🏪</span>
+            <div>
+              <strong>{{ market.name }}</strong>
+              <span class="market-schedule">{{ market.schedule_display }}</span>
+            </div>
+          </a>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
+      {% if farm.hours %}
+      <section class="detail-section">
+        <h2>Hours</h2>
+        <div class="hours-table">
+          {% for day, time in farm.hours.items %}
+          <div class="hours-row">
+            <span class="hours-day">{{ day }}</span>
+            <span class="hours-time">{{ time }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </section>
+      {% endif %}
+
+      <section class="detail-section reviews-section">
+        <h2>Reviews</h2>
+        <div id="reviews-container">
+          {% include 'reviews/_list.html' with reviews=farm.reviews.all %}
+        </div>
+        {% if user.is_authenticated and user != farm.owner %}
+        <div id="review-form-container">
+          {% include 'reviews/_form.html' %}
+        </div>
+        {% endif %}
+      </section>
+    </div>
+
+    <aside class="detail-sidebar">
+      {% if farm.contact_phone or farm.contact_email or farm.contact_website %}
+      <div class="sidebar-card">
+        <h3>Get in touch</h3>
+        {% if farm.contact_phone %}
+        <p class="contact-row">
+          <strong>Phone</strong>
+          <a href="tel:{{ farm.contact_phone }}">{{ farm.contact_phone }}</a>
+        </p>
+        {% endif %}
+        {% if farm.contact_email %}
+        <p class="contact-row">
+          <strong>Email</strong>
+          <a href="mailto:{{ farm.contact_email }}">{{ farm.contact_email }}</a>
+        </p>
+        {% endif %}
+        {% if farm.contact_website %}
+        <p class="contact-row">
+          <strong>Website</strong>
+          <a href="{{ farm.contact_website }}" target="_blank" rel="noopener">{{ farm.contact_website }}</a>
+        </p>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% if farm.latitude and farm.longitude %}
+      <div class="sidebar-card">
+        <div id="detail-map" style="height:200px;border-radius:12px;"></div>
+        <a href="https://www.google.com/maps/dir/?api=1&destination={{ farm.latitude }},{{ farm.longitude }}"
+           target="_blank" rel="noopener" class="btn-primary" style="width:100%;margin-top:var(--sp-sm);text-align:center;">Get Directions</a>
+      </div>
+      {% endif %}
+
+      {% if user.is_authenticated and user == farm.owner %}
+      <div class="sidebar-card">
+        <h3>Manage</h3>
+        <a href="{% url 'farms:edit' farm.slug %}" class="btn-secondary" style="width:100%;text-align:center;margin-bottom:var(--sp-sm);">Edit Listing</a>
+        <a href="{% url 'farms:manage_products' farm.slug %}" class="btn-secondary" style="width:100%;text-align:center;">Manage Products</a>
+      </div>
+      {% endif %}
+    </aside>
+  </div>
+</article>
+{% endblock %}
+
+{% block extra_js %}
+{% if farm.latitude and farm.longitude %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var map = L.map('detail-map', {zoomControl: false, attributionControl: false})
+              .setView([{{ farm.latitude }}, {{ farm.longitude }}], 12);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      subdomains: 'abcd', maxZoom: 19
+    }).addTo(map);
+    L.circleMarker([{{ farm.latitude }}, {{ farm.longitude }}], {
+      radius: 10, fillColor: '#4A6741', fillOpacity: 0.9, color: '#FDFAF3', weight: 2.5
+    }).addTo(map);
+  });
+</script>
+{% endif %}
+{% endblock %}

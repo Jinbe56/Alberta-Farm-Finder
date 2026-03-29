@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block title %}Farmers' Markets{% endblock %}
+
+{% block content %}
+<section class="page-header">
+  <h1>Farmers' Markets</h1>
+  <p class="page-sub">Find markets where local farms come together to sell fresh produce, meat, dairy, and more.</p>
+</section>
+
+<div class="markets-grid">
+  {% for market in markets %}
+  <a href="{% url 'farms:market_detail' market.slug %}" class="market-card">
+    <div class="market-card-header">
+      <span class="market-icon">🏪</span>
+      <h3>{{ market.name }}</h3>
+    </div>
+    <p class="card-location">{{ market.address_display }}</p>
+    {% if market.schedule_display %}
+    <p class="market-schedule">{{ market.schedule_display }}</p>
+    {% endif %}
+    {% if market.next_date %}
+    <span class="tag tag-season">Next: {{ market.next_date|date:"M j, Y" }}</span>
+    {% endif %}
+    <span class="market-vendors">{{ market.vendor_count }} vendor{{ market.vendor_count|pluralize }}</span>
+  </a>
+  {% empty %}
+  <div class="empty-state">
+    <p class="empty-state-heading">No markets listed yet</p>
+    <p class="empty-state-text">Know a local farmers' market? Let us know and we'll add it.</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

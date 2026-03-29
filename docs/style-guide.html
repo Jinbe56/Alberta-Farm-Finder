@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alberta Farm Finder — Style Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap');
+
+  :root {
+    /* === CORE PALETTE === */
+    --moss: #4A6741;
+    --moss-light: #5E7D54;
+    --fern: #7BA05B;
+    --sage: #A3B899;
+    --meadow: #D4E2C8;
+    --parchment: #F5F0E8;
+    --cream: #FDFAF3;
+    --bark: #5C4033;
+    --soil: #8B6F4E;
+    --wheat: #D4A853;
+    --terracotta: #C67B5C;
+    --sun: #E8B931;
+    --sky: #7CAABD;
+    --charcoal: #2C2C2C;
+    --stone: #6B6B6B;
+    --mist: #B8B8AA;
+
+    /* === FUNCTIONAL === */
+    --bg: var(--cream);
+    --card-bg: #F5F0E8;
+    --text-primary: var(--charcoal);
+    --text-secondary: var(--stone);
+    --text-warm: var(--bark);
+    --accent: var(--moss);
+    --accent-hover: var(--moss-light);
+    --highlight: var(--wheat);
+    --border: #E5DDD0;
+    --shadow: rgba(92, 64, 51, 0.08);
+
+    /* === SPACING === */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 40px;
+    --space-2xl: 64px;
+
+    /* === RADIUS — organic, soft, never sharp === */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-pill: 999px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    line-height: 1.6;
+  }
+
+  /* === LAYOUT === */
+  .page { max-width: 1000px; margin: 0 auto; padding: var(--space-xl); }
+  .section { margin-bottom: var(--space-2xl); }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-lg); }
+
+  /* === TYPOGRAPHY === */
+  h1 {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 2.4rem;
+    color: var(--bark);
+    font-weight: 400;
+    margin-bottom: var(--space-sm);
+  }
+  h2 {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 1.5rem;
+    color: var(--moss);
+    font-weight: 400;
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 2px solid var(--meadow);
+  }
+  h3 {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mist);
+    margin-bottom: var(--space-md);
+  }
+  p { color: var(--text-secondary); margin-bottom: var(--space-md); font-size: 0.95rem; }
+  .subtitle { font-size: 1.05rem; color: var(--soil); font-style: italic; margin-bottom: var(--space-xl); }
+
+  /* === HERO / HEADER === */
+  .hero {
+    text-align: center;
+    padding: var(--space-2xl) var(--space-xl);
+    margin-bottom: var(--space-2xl);
+    background: linear-gradient(170deg, var(--meadow) 0%, var(--parchment) 50%, var(--cream) 100%);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(123,160,91,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero h1 { font-size: 2.8rem; margin-bottom: var(--space-sm); }
+  .hero .subtitle { margin-bottom: 0; }
+
+  /* === COLOR SWATCHES === */
+  .swatch-row { display: flex; gap: var(--space-md); flex-wrap: wrap; margin-bottom: var(--space-lg); }
+  .swatch {
+    width: 100px;
+    text-align: center;
+  }
+  .swatch-color {
+    width: 100px;
+    height: 72px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    margin-bottom: var(--space-xs);
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+  .swatch-label { font-size: 0.75rem; font-weight: 600; color: var(--text-primary); }
+  .swatch-hex { font-size: 0.7rem; color: var(--mist); font-family: monospace; }
+
+  /* === TYPOGRAPHY SPECIMENS === */
+  .type-specimen {
+    padding: var(--space-lg);
+    background: var(--card-bg);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    margin-bottom: var(--space-md);
+  }
+  .type-specimen .label { font-size: 0.7rem; color: var(--mist); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: var(--space-xs); }
+  .type-heading { font-family: 'DM Serif Display', Georgia, serif; font-size: 2rem; color: var(--bark); }
+  .type-subheading { font-family: 'DM Serif Display', Georgia, serif; font-size: 1.3rem; color: var(--moss); }
+  .type-body { font-family: 'DM Sans', sans-serif; font-size: 0.95rem; color: var(--text-secondary); line-height: 1.7; }
+  .type-small { font-family: 'DM Sans', sans-serif; font-size: 0.8rem; color: var(--mist); }
+  .type-tag { font-family: 'DM Sans', sans-serif; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--moss); }
+
+  /* === BUTTONS === */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 10px 22px;
+    border-radius: var(--radius-pill);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .btn-primary {
+    background: var(--moss);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--moss-light); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(74,103,65,0.25); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--moss);
+    border: 1.5px solid var(--sage);
+  }
+  .btn-secondary:hover { background: var(--meadow); border-color: var(--moss); }
+  .btn-warm {
+    background: var(--wheat);
+    color: var(--bark);
+  }
+  .btn-warm:hover { background: #DEAD5E; transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--soil);
+    padding: 10px 16px;
+  }
+  .btn-ghost:hover { background: var(--parchment); }
+  .btn-row { display: flex; gap: var(--space-md); flex-wrap: wrap; align-items: center; }
+
+  /* === TAGS / CHIPS === */
+  .tag {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  .tag-product { background: var(--meadow); color: var(--moss); }
+  .tag-distance { background: var(--parchment); color: var(--soil); border: 1px solid var(--border); }
+  .tag-season { background: #FFF3D6; color: #8B6914; }
+  .tag-verified { background: #E8F4EA; color: var(--moss); }
+  .tag-row { display: flex; gap: var(--space-sm); flex-wrap: wrap; }
+
+  /* === CARDS === */
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: all 0.25s ease;
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(92,64,51,0.12); }
+  .card-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    background: linear-gradient(135deg, var(--meadow) 0%, var(--sage) 50%, var(--fern) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--moss);
+    font-size: 2.5rem;
+    position: relative;
+  }
+  .card-distance {
+    position: absolute;
+    top: var(--space-sm);
+    right: var(--space-sm);
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(4px);
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--soil);
+  }
+  .card-body { padding: 10px 12px 12px; }
+  .card-name {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 1.15rem;
+    color: var(--bark);
+    margin-bottom: 1px;
+  }
+  .card-location { font-size: 0.8rem; color: var(--mist); margin-bottom: 4px; }
+  .card-tags { margin-bottom: 4px; }
+  .card-rating { font-size: 0.8rem; color: var(--soil); }
+  .card-rating .stars { color: var(--wheat); letter-spacing: 1px; }
+
+  /* === SEARCH BAR === */
+  .search-bar {
+    display: flex;
+    align-items: center;
+    background: var(--card-bg);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-pill);
+    padding: 6px 6px 6px 20px;
+    box-shadow: 0 4px 16px var(--shadow);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .search-bar input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    background: transparent;
+  }
+  .search-bar input::placeholder { color: var(--mist); }
+  .search-bar .search-btn {
+    background: var(--moss);
+    color: white;
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 10px 20px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+
+  /* === FORM INPUTS === */
+  .input-group { margin-bottom: var(--space-md); }
+  .input-group label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-warm);
+    margin-bottom: var(--space-xs);
+  }
+  .input-field {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    background: var(--card-bg);
+    color: var(--text-primary);
+    transition: border-color 0.2s;
+  }
+  .input-field:focus { outline: none; border-color: var(--sage); box-shadow: 0 0 0 3px rgba(163,184,153,0.25); }
+  .input-field::placeholder { color: var(--mist); }
+
+  /* === RADIUS SLIDER === */
+  .slider-group { margin-bottom: var(--space-md); }
+  .slider-group label { font-size: 0.8rem; font-weight: 600; color: var(--text-warm); display: flex; justify-content: space-between; margin-bottom: var(--space-sm); }
+  .slider-group label span { color: var(--moss); font-weight: 600; }
+  input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--sage) 0%, var(--meadow) 100%);
+    outline: none;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--moss);
+    border: 3px solid white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    cursor: pointer;
+  }
+
+  /* === DIVIDER === */
+  .divider {
+    border: none;
+    height: 1px;
+    background: var(--border);
+    margin: var(--space-xl) 0;
+  }
+
+  /* === DESIGN NOTES === */
+  .note {
+    background: var(--parchment);
+    border-left: 3px solid var(--sage);
+    padding: var(--space-md) var(--space-lg);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    font-size: 0.85rem;
+    color: var(--soil);
+    margin: var(--space-md) 0;
+    line-height: 1.6;
+  }
+  .note strong { color: var(--bark); }
+
+  /* === MOCK NAV === */
+  .mock-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md) var(--space-lg);
+    background: var(--card-bg);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+    margin-bottom: var(--space-lg);
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+  .mock-logo {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 1.2rem;
+    color: var(--moss);
+  }
+  .mock-logo span { color: var(--wheat); }
+  .mock-nav-links { display: flex; gap: var(--space-lg); align-items: center; }
+  .mock-nav-links a { text-decoration: none; color: var(--stone); font-size: 0.85rem; font-weight: 500; }
+  .mock-nav-links a:hover { color: var(--moss); }
+
+  /* === VERIFIED BADGE === */
+  .verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.75rem;
+    color: var(--moss);
+    font-weight: 600;
+  }
+  .verified svg { width: 14px; height: 14px; fill: var(--fern); }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Alberta Farm Finder</h1>
+    <p class="subtitle">Style Guide & Visual Language</p>
+    <p style="color: var(--mist); font-size: 0.8rem; margin: 0;">Solarpunk aesthetic — organic, hopeful, community-rooted</p>
+  </div>
+
+  <!-- DESIGN PHILOSOPHY -->
+  <div class="section">
+    <h2>Design Philosophy</h2>
+    <p>Inspired by Luke Humphris' <em>When Society Collapsed</em> series and the solarpunk movement. This isn't a corporate marketplace — it's a community tool that feels like walking into a warm, sun-lit farm stand where someone hand-lettered the signs.</p>
+    <div class="note">
+      <strong>Key principles:</strong> Soft, rounded edges everywhere (nothing sharp or corporate). Earthy palette that feels grown, not designed. Serif headings for warmth and personality. Generous whitespace — let things breathe like an open field. Every interaction should feel unhurried and human.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- COLOR PALETTE -->
+  <div class="section">
+    <h2>Color Palette</h2>
+
+    <h3>Greens — the core</h3>
+    <div class="swatch-row">
+      <div class="swatch"><div class="swatch-color" style="background: #4A6741;"></div><div class="swatch-label">Moss</div><div class="swatch-hex">#4A6741</div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #5E7D54;"></div><div class="swatch-label">Moss Light</div><div class="swatch-hex">#5E7D54</div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #7BA05B;"></div><div class="swatch-label">Fern</div><div class="swatch-hex">#7BA05B</div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #A3B899;"></div><div class="swatch-label">Sage</div><div class="swatch-hex">#A3B899</div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #D4E2C8;"></div><div class="swatch-label">Meadow</div><div class="swatch-hex">#D4E2C8</div></div>
+    </div>
+
+    <h3>Earth tones — warmth & ground</h3>
+    <div class="swatch-row">
+      <div class="swatch"><div class="swatch-color" style="background: #5C4033;"></div><div class="swatch-label">Bark</div><div class="swatch-hex">#5C4033</div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #8B6F4E;"></div><div class="swatch-label">Soil</div><div class="swatch-hex">#8B6F4E</div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #D4A853;"></div><div class="swatch-label">Wheat</div><div class="swatch-hex">#D4A853</div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #C67B5C;"></div><div class="swatch-label">Terracotta</div><div class="swatch-hex">#C67B5C</div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #E8B931;"></div><div class="swatch-label">Sun</div><div class="swatch-hex">#E8B931</div></div>
+    </div>
+
+    <h3>Neutrals — background & text</h3>
+    <div class="swatch-row">
+      <div class="swatch"><div class="swatch-color" style="background: #FDFAF3;"></div><div class="swatch-label">Cream</div><div class="swatch-hex">#FDFAF3</div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #F5F0E8;"></div><div class="swatch-label">Parchment</div><div class="swatch-hex">#F5F0E8</div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #2C2C2C;"></div><div class="swatch-label">Charcoal</div><div class="swatch-hex">#2C2C2C</div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #6B6B6B;"></div><div class="swatch-label">Stone</div><div class="swatch-hex">#6B6B6B</div></div>
+      <div class="swatch"><div class="swatch-color" style="background: #B8B8AA;"></div><div class="swatch-label">Mist</div><div class="swatch-hex">#B8B8AA</div></div>
+    </div>
+
+    <div class="note">
+      <strong>Usage:</strong> Cream is the page background — never stark white. Moss is the primary action color. Bark for headings. Wheat for highlights and secondary CTAs. Terracotta sparingly for warmth accents.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- TYPOGRAPHY -->
+  <div class="section">
+    <h2>Typography</h2>
+    <p>Two fonts, both from the DM family. The serif brings warmth and personality (like hand-painted farm signs), while the sans-serif keeps body text clean and readable.</p>
+
+    <div class="type-specimen">
+      <div class="label">Headings — DM Serif Display</div>
+      <div class="type-heading">Fresh eggs from Sunridge Farm</div>
+    </div>
+    <div class="type-specimen">
+      <div class="label">Subheadings — DM Serif Display</div>
+      <div class="type-subheading">Find what's growing near you</div>
+    </div>
+    <div class="type-specimen">
+      <div class="label">Body — DM Sans (400)</div>
+      <div class="type-body">We're a small family farm just outside Lacombe, raising pastured chickens and growing vegetables the old-fashioned way. Come visit us at the farm gate on weekends or find us at the Red Deer Farmers Market every Saturday.</div>
+    </div>
+    <div class="type-specimen">
+      <div class="label">Small / Meta — DM Sans (400)</div>
+      <div class="type-small">Last updated 3 days ago &middot; Open Saturdays 9am-2pm</div>
+    </div>
+    <div class="type-specimen">
+      <div class="label">Tags / Labels — DM Sans (600, uppercase)</div>
+      <div class="type-tag">Eggs &nbsp;&middot;&nbsp; Pastured Poultry &nbsp;&middot;&nbsp; Vegetables</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- BUTTONS -->
+  <div class="section">
+    <h2>Buttons</h2>
+    <p>Pill-shaped, never sharp corners. Primary action is moss green. Secondary is outlined. Warm wheat for special CTAs.</p>
+    <div class="btn-row" style="margin-top: var(--space-md);">
+      <button class="btn btn-primary">Find Farms</button>
+      <button class="btn btn-secondary">View on Map</button>
+      <button class="btn btn-warm">List Your Farm</button>
+      <button class="btn btn-ghost">Learn more</button>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- TAGS -->
+  <div class="section">
+    <h2>Tags & Chips</h2>
+    <p>Soft, rounded pills for categorization. Different tints for different contexts.</p>
+    <div class="tag-row" style="margin-top: var(--space-md);">
+      <span class="tag tag-product">Eggs</span>
+      <span class="tag tag-product">Honey</span>
+      <span class="tag tag-product">Beef</span>
+      <span class="tag tag-distance">12 km away</span>
+      <span class="tag tag-season">In Season</span>
+      <span class="tag tag-verified">&#10003; Verified</span>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- SEARCH BAR -->
+  <div class="section">
+    <h2>Search Bar</h2>
+    <p>The centerpiece of the home page. Rounded, elevated, inviting.</p>
+    <div style="margin-top: var(--space-lg);">
+      <div class="search-bar">
+        <input type="text" placeholder="Search for eggs, honey, beef near Lacombe...">
+        <button class="search-btn">Search</button>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- FORM ELEMENTS -->
+  <div class="section">
+    <h2>Form Elements</h2>
+    <p>Simple, soft borders. Focus states use a gentle sage glow — no harsh blue outlines.</p>
+    <div class="grid-2" style="margin-top: var(--space-md);">
+      <div>
+        <div class="input-group">
+          <label>Farm Name</label>
+          <input class="input-field" type="text" placeholder="e.g. Sunridge Family Farm">
+        </div>
+        <div class="input-group">
+          <label>Location</label>
+          <input class="input-field" type="text" placeholder="Town, postal code, or address">
+        </div>
+      </div>
+      <div>
+        <div class="slider-group">
+          <label>Search Radius <span>50 km</span></label>
+          <input type="range" min="10" max="200" value="50">
+        </div>
+        <div class="input-group">
+          <label>What are you looking for?</label>
+          <input class="input-field" type="text" placeholder="e.g. pastured eggs, raw honey">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- FARM CARDS -->
+  <div class="section">
+    <h2>Farm Cards</h2>
+    <p>The primary browse element. Photo-forward, distance badge, product tags. Hover lifts gently.</p>
+    <div class="grid-3" style="margin-top: var(--space-lg);">
+
+      <div class="card">
+        <div class="card-img" style="background: linear-gradient(135deg, #B5C99A 0%, #87A96B 100%);">
+          <span style="opacity:0.5">&#127793;</span>
+          <div class="card-distance">8 km</div>
+        </div>
+        <div class="card-body">
+          <div class="card-name">Sunridge Family Farm</div>
+          <div class="card-location">Lacombe, AB</div>
+          <div class="card-tags tag-row">
+            <span class="tag tag-product">Eggs</span>
+            <span class="tag tag-product">Poultry</span>
+          </div>
+          <div class="card-rating"><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span> 4.9 (23)</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-img" style="background: linear-gradient(135deg, #E8D5B7 0%, #C9A96E 100%);">
+          <span style="opacity:0.5">&#127855;</span>
+          <div class="card-distance">23 km</div>
+        </div>
+        <div class="card-body">
+          <div class="card-name">Prairie Gold Apiary</div>
+          <div class="card-location">Ponoka, AB</div>
+          <div class="card-tags tag-row">
+            <span class="tag tag-product">Honey</span>
+            <span class="tag tag-product">Beeswax</span>
+          </div>
+          <div class="card-rating"><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9734;</span> 4.6 (11)</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-img" style="background: linear-gradient(135deg, #A0C4B8 0%, #6B9080 100%);">
+          <span style="opacity:0.5">&#127807;</span>
+          <div class="card-distance">41 km</div>
+        </div>
+        <div class="card-body">
+          <div class="card-name">Thunder Barn Ranch</div>
+          <div class="card-location">Red Deer County, AB</div>
+          <div class="card-tags tag-row">
+            <span class="tag tag-product">Beef</span>
+            <span class="tag tag-product">Lamb</span>
+          </div>
+          <div class="card-rating"><span class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</span> 5.0 (7)</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- NAVIGATION -->
+  <div class="section">
+    <h2>Navigation Bar</h2>
+    <p>Clean, simple, friendly. Logo uses the serif font.</p>
+    <div class="mock-nav">
+      <div class="mock-logo">Farm<span>Finder</span></div>
+      <div class="mock-nav-links">
+        <a href="#">Browse</a>
+        <a href="#">Map</a>
+        <a href="#">About</a>
+        <button class="btn btn-warm" style="padding: 8px 18px; font-size: 0.8rem;">List Your Farm</button>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- DESIGN RULES -->
+  <div class="section">
+    <h2>Design Rules</h2>
+
+    <div class="note"><strong>Corners:</strong> Always rounded. Cards get 20px, buttons get pill (999px), inputs get 8px. Nothing sharp.</div>
+    <div class="note"><strong>Shadows:</strong> Warm-tinted (brown-based rgba), never cold gray. Subtle by default, more pronounced on hover.</div>
+    <div class="note"><strong>Backgrounds:</strong> Cream (#FDFAF3), never pure white (#FFF). Cards can be white but the page never is.</div>
+    <div class="note"><strong>Borders:</strong> Soft, warm gray (#E5DDD0). Never stark or dark.</div>
+    <div class="note"><strong>Spacing:</strong> Generous. Let everything breathe. When in doubt, add more whitespace.</div>
+    <div class="note"><strong>Animations:</strong> Gentle, slow transitions (0.2-0.3s ease). Cards lift slightly on hover. Nothing bounces or flashes.</div>
+    <div class="note"><strong>Icons:</strong> If used, line-style only (not filled). Consider hand-drawn style icons to match the organic feel.</div>
+    <div class="note"><strong>Photos:</strong> Farm photos should be warm-toned. Consider a subtle warm filter overlay to keep visual consistency.</div>
+    <div class="note"><strong>Voice:</strong> Friendly, plain language. "Find what's growing near you" not "Discover local agricultural products." Write like you're talking to a neighbour.</div>
+  </div>
+
+</div>
+
+</body>
+</html>

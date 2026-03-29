@@ -1,0 +1,11 @@
+<p class="results-count">{{ farms|length }} farm{{ farms|length|pluralize }} found</p>
+<div class="results-grid">
+  {% for farm in farms %}
+    {% include 'farms/_card.html' %}
+  {% empty %}
+  <div class="empty-state">
+    <p class="empty-state-heading">No farms found nearby</p>
+    <p class="empty-state-text">Try widening your search radius or clearing your filters. There are good folks farming all across Alberta.</p>
+  </div>
+  {% endfor %}
+</div>

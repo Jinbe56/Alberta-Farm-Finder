@@ -1,0 +1,21 @@
+{% if user.is_authenticated %}
+<form class="review-form"
+      hx-post="{% url 'reviews:create' farm.slug %}"
+      hx-target="#reviews-container"
+      hx-swap="innerHTML">
+  {% csrf_token %}
+  <h3 class="review-form-title">Leave a review</h3>
+
+  <fieldset class="star-selector">
+    <legend class="sr-only">Rating</legend>
+    {% for i in "54321" %}
+    <input type="radio" id="star-{{ i }}" name="rating" value="{{ i }}" required>
+    <label for="star-{{ i }}" class="star-label" title="{{ i }} star{{ i|pluralize }}">&#9733;</label>
+    {% endfor %}
+  </fieldset>
+
+  <textarea name="text" rows="4" placeholder="How was your experience? What did you pick up?" class="review-textarea"></textarea>
+
+  <button type="submit" class="btn-primary">Submit Review</button>
+</form>
+{% endif %}

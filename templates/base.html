@@ -1,0 +1,30 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Farm Finder{% endblock %} — Alberta Farm Finder</title>
+  <meta name="description" content="{% block meta_description %}Find local Alberta farms selling fresh eggs, honey, beef, produce, and dairy direct to you. Search by product and proximity.{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}Alberta Farm Finder{% endblock %}">
+  <meta property="og:description" content="Find what's growing near you. Fresh food, straight from Alberta farms to your table.">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_CA">
+  <meta name="theme-color" content="#4A6741">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  {% include '_nav.html' %}
+  {% include '_messages.html' %}
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  {% include '_footer.html' %}
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

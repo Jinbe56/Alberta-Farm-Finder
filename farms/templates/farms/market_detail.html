@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ market.name }}{% endblock %}
+
+{% block content %}
+<article class="farm-detail">
+  <div class="detail-header">
+    <div class="detail-title-row">
+      <span class="market-badge">Farmers' Market</span>
+      <h1>{{ market.name }}</h1>
+    </div>
+    <p class="detail-address">{{ market.address_display }}</p>
+  </div>
+
+  {% if market.schedule_display %}
+  <section class="detail-section">
+    <h2>Schedule</h2>
+    <p class="market-schedule-detail">{{ market.schedule_display }}</p>
+    {% if market.next_date %}
+    <p><span class="tag tag-season">Next market: {{ market.next_date|date:"l, F j, Y" }}</span></p>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  {% if market.description %}
+  <section class="detail-section">
+    <h2>About</h2>
+    <p>{{ market.description|linebreaksbr }}</p>
+  </section>
+  {% endif %}
+
+  <section class="detail-section">
+    <h2>Vendors ({{ market.vendors.count }})</h2>
+    {% if market.vendors.exists %}
+    <div class="results-grid">
+      {% for farm in market.vendors.all %}
+      {% include 'farms/_card.html' %}
+      {% endfor %}
+    </div>
+    {% else %}
+    <p class="empty-hint">No vendors listed yet for this market.</p>
+    {% endif %}
+  </section>
+
+  {% if market.contact_website or market.contact_email %}
+  <section class="detail-section">
+    <h2>Contact</h2>
+    <div class="contact-card">
+      {% if market.contact_website %}
+      <p class="contact-row"><strong>Website:</strong> <a href="{{ market.contact_website }}" target="_blank" rel="noopener">{{ market.contact_website }}</a></p>
+      {% endif %}
+      {% if market.contact_email %}
+      <p class="contact-row"><strong>Email:</strong> <a href="mailto:{{ market.contact_email }}">{{ market.contact_email }}</a></p>
+      {% endif %}
+    </div>
+  </section>
+  {% endif %}
+
+  {% if market.latitude and market.longitude %}
+  <div class="detail-actions">
+    <a href="https://www.google.com/maps/dir/?api=1&destination={{ market.latitude }},{{ market.longitude }}"
+       target="_blank" rel="noopener" class="btn-primary">Get Directions</a>
+  </div>
+  {% endif %}
+</article>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="auth-card">
+    <h1>Join Farm Finder</h1>
+    <p class="auth-sub">Create an account to browse farms, leave reviews, or list your own.</p>
+
+    {% if form.non_field_errors %}
+    <div class="form-errors">
+      {% for error in form.non_field_errors %}
+      <p class="form-error">{{ error }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" class="auth-form">
+      {% csrf_token %}
+
+      <div class="account-type-section">
+        <label class="form-label">I am a...</label>
+        <div class="account-type-toggle">
+          <label class="account-type-option">
+            <input type="radio" name="account_type" value="buyer" {% if not is_farmer %}checked{% endif %}>
+            <div class="account-type-card">
+              <span class="account-type-icon">🛒</span>
+              <span class="account-type-name">Buyer</span>
+              <span class="account-type-desc">Find local farms and leave reviews</span>
+            </div>
+          </label>
+          <label class="account-type-option">
+            <input type="radio" name="account_type" value="farmer" {% if is_farmer %}checked{% endif %}>
+            <div class="account-type-card">
+              <span class="account-type-icon">🌾</span>
+              <span class="account-type-name">Farmer</span>
+              <span class="account-type-desc">List your farm and sell direct</span>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      {% for field in form %}
+      <div class="form-group {% if field.errors %}has-error{% endif %}">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+        <p class="form-help">{{ field.help_text }}</p>
+        {% endif %}
+        {% for error in field.errors %}
+        <p class="form-error">{{ error }}</p>
+        {% endfor %}
+      </div>
+      {% endfor %}
+
+      <button type="submit" class="btn-primary btn-full">Create account</button>
+    </form>
+
+    <p class="auth-switch">Already have an account? <a href="/login/">Log in</a></p>
+  </div>
+</div>
+{% endblock %}

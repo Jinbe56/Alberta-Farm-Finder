@@ -1,0 +1,73 @@
+<div class="products-manage">
+  <h3>Your products</h3>
+
+  {% if products %}
+  <div class="products-list">
+    {% for product in products %}
+    <div class="product-row {% if not product.is_available %}product-unavailable{% endif %}">
+      <div class="product-info">
+        <span class="product-name">{{ product.name }}</span>
+        <span class="tag tag-product" style="font-size:0.7rem;">{{ product.category.name }}</span>
+        {% if product.is_seasonal %}
+        <span class="tag tag-season" style="font-size:0.7rem;">Seasonal{% if product.season_note %} — {{ product.season_note }}{% endif %}</span>
+        {% endif %}
+        {% if product.price_note %}
+        <span class="product-price">{{ product.price_note }}</span>
+        {% endif %}
+      </div>
+      <div class="product-actions">
+        <form method="post"
+              hx-post="{% url 'farms:manage_products' farm.slug %}"
+              hx-target="#products-container"
+              hx-swap="innerHTML"
+              style="display:inline;">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="toggle">
+          <input type="hidden" name="product_id" value="{{ product.id }}">
+          <button type="submit" class="btn-sm {% if product.is_available %}btn-primary{% else %}btn-secondary{% endif %}">
+            {% if product.is_available %}Available{% else %}Unavailable{% endif %}
+          </button>
+        </form>
+        <form method="post"
+              hx-post="{% url 'farms:manage_products' farm.slug %}"
+              hx-target="#products-container"
+              hx-swap="innerHTML"
+              style="display:inline;">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="delete">
+          <input type="hidden" name="product_id" value="{{ product.id }}">
+          <button type="submit" class="btn-ghost btn-sm" style="color:var(--terracotta);">Remove</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="empty-hint">No products listed yet. Add what you're currently selling.</p>
+  {% endif %}
+
+  <form method="post" class="product-add-form"
+        hx-post="{% url 'farms:manage_products' farm.slug %}"
+        hx-target="#products-container"
+        hx-swap="innerHTML">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="add">
+    <div class="product-add-row">
+      <input type="text" name="product_name" placeholder="e.g. Free-range eggs, Raw honey..." required>
+      <select name="category_id" required>
+        <option value="">Category</option>
+        {% for cat in categories %}
+        <option value="{{ cat.id }}">{{ cat.icon }} {{ cat.name }}</option>
+        {% endfor %}
+      </select>
+      <input type="text" name="price_note" placeholder="Price (optional)" style="max-width:140px;">
+    </div>
+    <div class="product-add-row">
+      <label class="checkbox-label">
+        <input type="checkbox" name="is_seasonal"> Seasonal
+      </label>
+      <input type="text" name="season_note" placeholder="e.g. June–September" style="max-width:200px;">
+      <button type="submit" class="btn-primary btn-sm">Add product</button>
+    </div>
+  </form>
+</div>

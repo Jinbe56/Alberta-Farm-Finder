@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit — {{ farm.name }}{% endblock %}
+
+{% block content %}
+<div class="form-page">
+  <h1>Edit Your Listing</h1>
+
+  <form method="post" enctype="multipart/form-data" class="farm-form">
+    {% csrf_token %}
+    {% for field in form %}
+    <div class="form-group {% if field.errors %}has-error{% endif %}">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+      {{ field }}
+      {% if field.help_text %}
+      <p class="form-help">{{ field.help_text }}</p>
+      {% endif %}
+      {% for error in field.errors %}
+      <p class="form-error">{{ error }}</p>
+      {% endfor %}
+    </div>
+    {% endfor %}
+
+    {% if farm.photos.exists %}
+    <div class="existing-photos">
+      <label>Current Photos</label>
+      <div class="photo-thumbs">
+        {% for photo in farm.photos.all %}
+        <div class="photo-thumb">
+          <img src="{{ photo.image.url }}" alt="{{ farm.name }}">
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Update Listing</button>
+      <a href="{% url 'farms:detail' farm.slug %}" class="btn-secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
