@@ -12,6 +12,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard, name='dashboard'),
     path('markets/', views.market_list, name='market_list'),
     path('markets/<slug:slug>/', views.market_detail, name='market_detail'),
+    path('markets/<slug:slug>/join/', views.market_join, name='market_join'),
     path('api/farms/search/', views.search, name='search_api'),
     path('api/farms/map-data/', views.map_data, name='map_data'),
 ]

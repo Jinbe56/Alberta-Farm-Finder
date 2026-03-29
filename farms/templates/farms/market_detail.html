@@ -1,66 +1,120 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}{{ market.name }}{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+
 {% block content %}
 <article class="farm-detail">
-  <div class="detail-header">
-    <div class="detail-title-row">
-      <span class="market-badge">Farmers' Market</span>
-      <h1>{{ market.name }}</h1>
-    </div>
-    <p class="detail-address">{{ market.address_display }}</p>
-  </div>
+  <div class="detail-content">
+    <div class="detail-main">
+      <div class="detail-header">
+        <span class="market-badge">Farmers' Market</span>
+        <h1>{{ market.name }}</h1>
+        <p class="detail-address">{{ market.address_display }}</p>
+      </div>
 
-  {% if market.schedule_display %}
-  <section class="detail-section">
-    <h2>Schedule</h2>
-    <p class="market-schedule-detail">{{ market.schedule_display }}</p>
-    {% if market.next_date %}
-    <p><span class="tag tag-season">Next market: {{ market.next_date|date:"l, F j, Y" }}</span></p>
-    {% endif %}
-  </section>
-  {% endif %}
-
-  {% if market.description %}
-  <section class="detail-section">
-    <h2>About</h2>
-    <p>{{ market.description|linebreaksbr }}</p>
-  </section>
-  {% endif %}
-
-  <section class="detail-section">
-    <h2>Vendors ({{ market.vendors.count }})</h2>
-    {% if market.vendors.exists %}
-    <div class="results-grid">
-      {% for farm in market.vendors.all %}
-      {% include 'farms/_card.html' %}
-      {% endfor %}
-    </div>
-    {% else %}
-    <p class="empty-hint">No vendors listed yet for this market.</p>
-    {% endif %}
-  </section>
-
-  {% if market.contact_website or market.contact_email %}
-  <section class="detail-section">
-    <h2>Contact</h2>
-    <div class="contact-card">
-      {% if market.contact_website %}
-      <p class="contact-row"><strong>Website:</strong> <a href="{{ market.contact_website }}" target="_blank" rel="noopener">{{ market.contact_website }}</a></p>
+      {% if market.schedule_display %}
+      <section class="detail-section">
+        <h2>Schedule</h2>
+        <p class="market-schedule-detail">{{ market.schedule_display }}</p>
+        {% if market.next_date %}
+        <p style="margin-top:var(--sp-sm);"><span class="tag tag-season">Next market: {{ market.next_date|date:"l, F j, Y" }}</span></p>
+        {% endif %}
+      </section>
       {% endif %}
-      {% if market.contact_email %}
-      <p class="contact-row"><strong>Email:</strong> <a href="mailto:{{ market.contact_email }}">{{ market.contact_email }}</a></p>
+
+      {% if market.description %}
+      <section class="detail-section">
+        <h2>About</h2>
+        <p>{{ market.description|linebreaksbr }}</p>
+      </section>
+      {% endif %}
+
+      <section class="detail-section">
+        <h2>Vendors ({{ market.vendors.count }})</h2>
+        {% if market.vendors.exists %}
+        <div class="results-grid" style="grid-template-columns:repeat(2,1fr);">
+          {% for farm in market.vendors.all %}
+          {% include 'farms/_card.html' %}
+          {% endfor %}
+        </div>
+        {% else %}
+        <p class="empty-hint">No vendors listed yet for this market. Are you a farmer? Join below.</p>
+        {% endif %}
+      </section>
+
+      {% if user_farms %}
+      <section class="detail-section">
+        <h2>Sell at this market</h2>
+        <p style="color:var(--stone);margin-bottom:var(--sp-md);">Add your farm as a vendor at {{ market.name }}.</p>
+        {% for farm in user_farms %}
+        <div class="vendor-signup-row">
+          <span class="vendor-farm-name">{{ farm.name }}</span>
+          {% if farm in market.vendors.all %}
+          <form method="post" action="{% url 'farms:market_join' market.slug %}" style="display:inline;">
+            {% csrf_token %}
+            <input type="hidden" name="farm_id" value="{{ farm.id }}">
+            <input type="hidden" name="action" value="leave">
+            <button type="submit" class="btn-ghost btn-sm" style="color:var(--terracotta);">Leave market</button>
+          </form>
+          <span class="tag tag-verified" style="font-size:0.75rem;">Vendor</span>
+          {% else %}
+          <form method="post" action="{% url 'farms:market_join' market.slug %}" style="display:inline;">
+            {% csrf_token %}
+            <input type="hidden" name="farm_id" value="{{ farm.id }}">
+            <input type="hidden" name="action" value="join">
+            <button type="submit" class="btn-primary btn-sm">Join as vendor</button>
+          </form>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </section>
       {% endif %}
     </div>
-  </section>
-  {% endif %}
 
-  {% if market.latitude and market.longitude %}
-  <div class="detail-actions">
-    <a href="https://www.google.com/maps/dir/?api=1&destination={{ market.latitude }},{{ market.longitude }}"
-       target="_blank" rel="noopener" class="btn-primary">Get Directions</a>
+    <aside class="detail-sidebar">
+      {% if market.contact_website or market.contact_email %}
+      <div class="sidebar-card">
+        <h3>Contact</h3>
+        {% if market.contact_website %}
+        <p class="contact-row"><strong>Website</strong><a href="{{ market.contact_website }}" target="_blank" rel="noopener">{{ market.contact_website }}</a></p>
+        {% endif %}
+        {% if market.contact_email %}
+        <p class="contact-row"><strong>Email</strong><a href="mailto:{{ market.contact_email }}">{{ market.contact_email }}</a></p>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% if market.latitude and market.longitude %}
+      <div class="sidebar-card">
+        <div id="detail-map" style="height:200px;border-radius:12px;"></div>
+        <a href="https://www.google.com/maps/dir/?api=1&destination={{ market.latitude }},{{ market.longitude }}"
+           target="_blank" rel="noopener" class="btn-primary" style="width:100%;margin-top:var(--sp-sm);text-align:center;">Get Directions</a>
+      </div>
+      {% endif %}
+    </aside>
   </div>
-  {% endif %}
 </article>
+{% endblock %}
+
+{% block extra_js %}
+{% if market.latitude and market.longitude %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var map = L.map('detail-map', {zoomControl: false, attributionControl: false})
+              .setView([{{ market.latitude }}, {{ market.longitude }}], 13);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+      subdomains: 'abcd', maxZoom: 19
+    }).addTo(map);
+    L.circleMarker([{{ market.latitude }}, {{ market.longitude }}], {
+      radius: 12, fillColor: '#D4A853', fillOpacity: 0.9, color: '#5C4033', weight: 2.5
+    }).addTo(map);
+  });
+</script>
+{% endif %}
 {% endblock %}

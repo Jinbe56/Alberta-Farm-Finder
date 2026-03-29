@@ -961,6 +961,21 @@ ul, ol {
   margin-bottom: var(--sp-2xl);
 }
 
+.breadcrumb {
+  font-size: var(--text-meta);
+  color: var(--mist);
+  margin-bottom: var(--sp-sm);
+}
+
+.breadcrumb a {
+  color: var(--moss);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
 /* Style Django's raw form widgets */
 .farm-form .form-group {
   margin-bottom: var(--sp-xl);
@@ -1981,6 +1996,25 @@ ul, ol {
   padding: 4px 12px;
   border-radius: var(--radius-pill);
   margin-bottom: var(--sp-sm);
+}
+
+/* Vendor signup row */
+.vendor-signup-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-md);
+  padding: var(--sp-md) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.vendor-signup-row:last-child {
+  border-bottom: none;
+}
+
+.vendor-farm-name {
+  font-weight: 500;
+  color: var(--bark);
+  flex: 1;
 }
 
 /* --------------------------------------------------------------------------

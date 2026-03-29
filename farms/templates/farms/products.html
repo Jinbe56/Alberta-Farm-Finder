@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Products — {{ farm.name }}{% endblock %}
+
+{% block content %}
+<div class="form-page">
+  <div class="page-header" style="text-align:left;">
+    <p class="breadcrumb"><a href="/dashboard/">Dashboard</a> &rsaquo; <a href="{% url 'farms:detail' farm.slug %}">{{ farm.name }}</a> &rsaquo; Products</p>
+    <h1>Manage Products</h1>
+    <p class="form-intro">Update what you currently have available. Buyers see this on your farm page.</p>
+  </div>
+
+  <div id="products-container">
+    {% include 'farms/_products_manage.html' %}
+  </div>
+</div>
+{% endblock %}

@@ -189,11 +189,16 @@ def manage_products(request, slug):
     products = farm.products.select_related('category').all()
     categories = Category.objects.all()
 
-    return render(request, 'farms/_products_manage.html', {
+    ctx = {
         'farm': farm,
         'products': products,
         'categories': categories,
-    })
+    }
+
+    # HTMX partial vs full page
+    if request.headers.get('HX-Request'):
+        return render(request, 'farms/_products_manage.html', ctx)
+    return render(request, 'farms/products.html', ctx)
 
 
 # ---- Farmers Markets ----
@@ -208,7 +213,31 @@ def market_detail(request, slug):
         FarmersMarket.objects.prefetch_related('vendors__categories', 'vendors__photos'),
         slug=slug, is_active=True,
     )
-    return render(request, 'farms/market_detail.html', {'market': market})
+    user_farms = []
+    if request.user.is_authenticated:
+        user_farms = Farm.objects.filter(owner=request.user, is_active=True)
+    return render(request, 'farms/market_detail.html', {
+        'market': market,
+        'user_farms': user_farms,
+    })
+
+
+@login_required
+def market_join(request, slug):
+    """Add or remove a farm from a market."""
+    market = get_object_or_404(FarmersMarket, slug=slug, is_active=True)
+    farm_id = request.POST.get('farm_id')
+    action = request.POST.get('action', 'join')
+    farm = get_object_or_404(Farm, id=farm_id, owner=request.user)
+
+    if action == 'leave':
+        market.vendors.remove(farm)
+        messages.success(request, f'{farm.name} removed from {market.name}.')
+    else:
+        market.vendors.add(farm)
+        messages.success(request, f'{farm.name} is now a vendor at {market.name}!')
+
+    return redirect('farms:market_detail', slug=slug)
 
 
 def map_data(request):
