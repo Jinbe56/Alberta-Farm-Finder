@@ -1,4 +1,18 @@
-<p class="results-count">{{ farms|length }} farm{{ farms|length|pluralize }} found</p>
+<div class="results-header">
+  <p class="results-count">{{ total_count }} farm{{ total_count|pluralize }} found</p>
+  <div class="sort-controls">
+    <label class="sort-label">Sort by</label>
+    <select name="sort" class="sort-select"
+            hx-get="/api/farms/search/"
+            hx-target="#results"
+            hx-include="[name='q'],[name='lat'],[name='lng'],[name='radius'],[name='category']">
+      <option value="distance" {% if sort == 'distance' %}selected{% endif %}>Nearest</option>
+      <option value="rating" {% if sort == 'rating' %}selected{% endif %}>Top rated</option>
+      <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest</option>
+      <option value="name" {% if sort == 'name' %}selected{% endif %}>Name (A-Z)</option>
+    </select>
+  </div>
+</div>
 <div class="results-grid">
   {% for farm in farms %}
     {% include 'farms/_card.html' %}
@@ -8,4 +22,15 @@
     <p class="empty-state-text">Try widening your search radius or clearing your filters. There are good folks farming all across Alberta.</p>
   </div>
   {% endfor %}
+  {% if has_more %}
+  <div id="load-more-trigger" class="load-more-wrap">
+    <button class="btn-secondary load-more-btn"
+            hx-get="/api/farms/search/?page={{ next_page }}&append=1"
+            hx-target="#load-more-trigger"
+            hx-swap="outerHTML"
+            hx-include="[name='q'],[name='lat'],[name='lng'],[name='radius'],[name='category'],[name='sort']">
+      Load more farms
+    </button>
+  </div>
+  {% endif %}
 </div>

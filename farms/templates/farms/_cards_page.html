@@ -1,0 +1,14 @@
+{% for farm in farms %}
+  {% include 'farms/_card.html' %}
+{% endfor %}
+{% if has_more %}
+<div id="load-more-trigger" class="load-more-wrap">
+  <button class="btn-secondary load-more-btn"
+          hx-get="/api/farms/search/?page={{ next_page }}&append=1"
+          hx-target="#load-more-trigger"
+          hx-swap="outerHTML"
+          hx-include="[name='q'],[name='lat'],[name='lng'],[name='radius'],[name='category'],[name='sort']">
+    Load more farms
+  </button>
+</div>
+{% endif %}

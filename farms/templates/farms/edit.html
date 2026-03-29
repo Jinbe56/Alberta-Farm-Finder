@@ -22,17 +22,33 @@
     {% endfor %}
 
     {% if farm.photos.exists %}
-    <div class="existing-photos">
-      <label>Current Photos</label>
+    <div class="form-group">
+      <label>Current photos</label>
       <div class="photo-thumbs">
         {% for photo in farm.photos.all %}
         <div class="photo-thumb">
           <img src="{{ photo.image.url }}" alt="{{ farm.name }}">
+          {% if photo.is_primary %}<span class="thumb-badge">Primary</span>{% endif %}
         </div>
         {% endfor %}
       </div>
     </div>
     {% endif %}
+
+    <div class="form-group">
+      <label>Add a photo</label>
+      <div class="photo-upload-zone" id="photo-drop">
+        <input type="file" name="photo" accept="image/*" id="photo-input" class="photo-file-input">
+        <div class="photo-upload-prompt" id="upload-prompt">
+          <span class="upload-icon">📷</span>
+          <p>Drag a photo here or <strong>click to browse</strong></p>
+        </div>
+        <div class="photo-preview" id="photo-preview" style="display:none;">
+          <img id="preview-img" alt="Preview">
+          <button type="button" class="photo-remove" onclick="removePhoto()">Remove</button>
+        </div>
+      </div>
+    </div>
 
     <div class="form-actions">
       <button type="submit" class="btn-primary">Update Listing</button>
@@ -40,4 +56,45 @@
     </div>
   </form>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  var dropZone = document.getElementById('photo-drop');
+  var fileInput = document.getElementById('photo-input');
+  var preview = document.getElementById('photo-preview');
+  var previewImg = document.getElementById('preview-img');
+  var prompt = document.getElementById('upload-prompt');
+
+  dropZone.addEventListener('click', function() { fileInput.click(); });
+  dropZone.addEventListener('dragover', function(e) { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', function() { dropZone.classList.remove('drag-over'); });
+  dropZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    if (e.dataTransfer.files.length) {
+      fileInput.files = e.dataTransfer.files;
+      showPreview(e.dataTransfer.files[0]);
+    }
+  });
+  fileInput.addEventListener('change', function() {
+    if (fileInput.files.length) showPreview(fileInput.files[0]);
+  });
+
+  function showPreview(file) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      previewImg.src = e.target.result;
+      preview.style.display = '';
+      prompt.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removePhoto() {
+    fileInput.value = '';
+    preview.style.display = 'none';
+    prompt.style.display = '';
+  }
+</script>
 {% endblock %}

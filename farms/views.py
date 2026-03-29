@@ -8,12 +8,17 @@ from .models import Farm, Category, FarmPhoto, FarmersMarket, FarmProduct
 from .forms import FarmForm, FarmPhotoForm
 
 
+FARMS_PER_PAGE = 12
+
+
 def search(request):
     lat = request.GET.get('lat')
     lng = request.GET.get('lng')
     category = request.GET.get('category')
     radius = int(request.GET.get('radius', 50))
     q = request.GET.get('q', '')
+    sort = request.GET.get('sort', 'distance')
+    page = int(request.GET.get('page', 1))
 
     farms = Farm.objects.filter(is_active=True).prefetch_related('categories', 'photos')
 
@@ -28,29 +33,56 @@ def search(request):
         ).distinct()
 
     farm_list = list(farms)
-    if lat and lng:
+    has_location = bool(lat and lng)
+
+    if has_location:
         user_lat, user_lng = float(lat), float(lng)
         for farm in farm_list:
             farm.distance_km = farm.distance_to(user_lat, user_lng)
         farm_list = [f for f in farm_list if f.distance_km is not None and f.distance_km <= radius]
+
+    # Sort
+    if sort == 'rating':
+        farm_list.sort(key=lambda f: f.average_rating(), reverse=True)
+    elif sort == 'newest':
+        farm_list.sort(key=lambda f: f.created_at, reverse=True)
+    elif sort == 'name':
+        farm_list.sort(key=lambda f: f.name.lower())
+    elif has_location:
         farm_list.sort(key=lambda f: f.distance_km)
+
+    total_count = len(farm_list)
+
+    # Paginate
+    start = (page - 1) * FARMS_PER_PAGE
+    end = start + FARMS_PER_PAGE
+    farm_page = farm_list[start:end]
+    has_more = end < total_count
 
     categories = Category.objects.filter(parent=None)
 
-    if request.headers.get('HX-Request'):
-        return render(request, 'farms/_results.html', {
-            'farms': farm_list,
-            'has_location': bool(lat and lng),
-        })
+    ctx = {
+        'farms': farm_page,
+        'total_count': total_count,
+        'has_location': has_location,
+        'has_more': has_more,
+        'next_page': page + 1,
+        'sort': sort,
+    }
 
-    return render(request, 'farms/search.html', {
-        'farms': farm_list,
+    if request.headers.get('HX-Request'):
+        # If loading more, just return cards to append
+        if request.GET.get('append'):
+            return render(request, 'farms/_cards_page.html', ctx)
+        return render(request, 'farms/_results.html', ctx)
+
+    ctx.update({
         'categories': categories,
         'selected_category': category,
         'radius': radius,
         'query': q,
-        'has_location': bool(lat and lng),
     })
+    return render(request, 'farms/search.html', ctx)
 
 
 def farm_detail(request, slug):
